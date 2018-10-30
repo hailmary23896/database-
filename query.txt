@@ -1,0 +1,227 @@
+a. create table client
+(
+cno varchar(10),
+name varchar(20),
+address varchar(20),
+city varchar(20),
+pincode int,
+state varchar(20),
+baldue int);
+
+   insert into client
+	values('C01','Amritha','Abcd','cochin',680324,'Kerala',14000);
+   insert into client
+	values('C02','Manu','feg','cochin',680324,'Kerala',0);
+   insert into client
+	values('C03','Alen','ghij','Coimbatore',680345,'Karnataka',5000);
+   insert into client
+	values('C04','Ammu','klmn','Pune',680423,'Maharashtra','500');
+   insert into client
+	values('C05','Megha','newr','Gandipuram',680321,'Karnataka',0);
+
+b. create table product
+(
+	pno varchar(10),
+	description varchar(20),
+	profit_percetnage float,
+	unit_measurement varchar(20) default 'piece',
+	qtyon_hand int,
+	reorder_lvl int,
+	sellprice int,
+	costprice int);
+
+
+	insert into product
+		values('P01','T-shirts',5,'piece',200,50,350,250);
+	insert into product
+		values('P02','shirts',6,'Piece',150,50,500,350);
+	insert into product
+		values('P03','Cotton Jeans',5,'Piece',100,20,750,500);
+	insert into product
+		values('P04','Trousers',4,'Piece',500,20,350,250);
+	insert into product
+		values('P05','Skirts',2.5,'Piece',50,30,200,150);
+	insert into product
+		values('P06','tops',3,'Piece',10,40,700,300);
+c. create table salesman
+	(
+		sno varchar(20),
+		sname varchar(20),
+		city varchar(20),
+		state varchar(20),
+		selamt int,
+		TgtToGet int,
+		qtysale int,
+		remarks varchar(20)); 
+
+
+	insert into salesman
+		values('S01','Mahesh','Pune','Maharashtra',3000,100,50,'good');
+	insert into salesman
+		values('S02','Manoj','Coimbatore','Karnataka',3000,500,100,'bad');
+	insert into salesman 
+		values('S03','Tressa','Cochin','Kerala',3000,750,100,'bad');
+	insert into salesman 
+		values('S04','Anil','Pune','Maharashtra',3500,350,150,'good');
+
+d. create table ordertable
+	(
+		orderno varchar(3),
+		orderdate date,
+		cno varchar(4),
+		delyaddr varchar(4),
+		delyType varchar(4),
+		sno varchar(4),
+		delydate date,
+		orderstatus varchar(20));
+
+		insert into ordertable
+			values('O1','02-Jun-13','C03','xxx','F','S02','23-jul-13','Fulfilled');
+		insert into ordertable
+			values('O2','02-may-12','C02','yyy','P','S03','03-jun-12','Cancelled');
+		insert into ordertable
+			values('O3','20-dec-11','C04','zzz','P','S01','21-jan-12','Fulfilled');
+		insert into ordertable
+			values('O4','23-jul-13','C01','qqq','F','S04','30-jul-13','In Process');
+	
+
+
+e. create table orderdetails
+	(
+		orderno varchar(4),
+		pno	varchar(4),
+		qty_ordered int,
+		qtydisp int,
+		productrate int);
+
+
+		insert into orderdetails
+			values('O3','P01',4,4,525);
+		insert into orderdetails
+			values('O2','P01',10,0,525);
+		insert into orderdetails
+			values('O1','P03',2,2,1050);
+		insert into orderdetails
+			values('O4','P04',2,1,700);
+
+1.
+	select description
+	from product p,orderdetails o
+	where p.pno=o.pno and qtydisp>2;
+
+2.	select description ,p.pno
+
+	from product p 
+
+	minus
+	
+select description ,p.pno
+
+
+	from product p,orderdetails o
+
+
+	where p.pno=o.pno and qtydisp>2;
+
+3.
+	select c.cno,name,address,city,pincode,state 
+	from client c,ordertable o,orderdetails s,product p
+	where c.cno=o.cno and o.orderno=s.orderno and s.pno=p.pno and description='T-shirts';		
+4. 
+	select name,sname,description
+	from client c,ordertable o,orderdetails s,product p,salesman s
+	where c.cno=o.cno and o.orderno=s.orderno and s.pno=p.pno and o.sno=s.sno and orderstatus='Fulfilled';
+5. 
+	select c.cno,name,address,city,pincode,state
+	from client c,ordertable o 
+	where c.cno=o.cno and orderstatus='Cancelled';
+6.
+	select name,sname
+	from client c,ordertable o,salesman s
+	where c.cno=o.cno and o.sno=s.sno and c.city='cochin';
+	
+7.
+	select name
+	from client c,ordertable o,orderdetails s
+	where c.cno=o.cno and o.orderno=s.orderno and qty_ordered>=1;
+
+8.
+	select cno
+
+
+	from client
+
+
+	minus
+
+	
+select p.cno
+
+
+
+	from client p,ordertable o
+
+
+
+	where p.cno=o.cno ;
+9.
+	select p.pno,qty_ordered
+	from product p,orderdetails o
+	where p.pno=o.pno;
+10.
+
+	select name,o.orderno,o.cno clientnum,ord.pno productnum ,description
+
+	from ordertable o,client c,orderdetails ord,product p
+
+	where o.cno=c.cno and name='Manu' and o.orderno=ord.orderno and ord.pno=p.pno;
+	
+11.
+
+	select name,ord.qty_ordered,o.orderno,description product_name
+
+	from ordertable o,client c,orderdetails ord,product p
+
+	where o.cno=c.cno and ord.qty_ordered<4  and o.orderno=ord.orderno and ord.pno=p.pno;
+
+12.
+	select c.Cno,p.description,d.qty_ordered
+
+
+	from client c,product p, orderdetails d,ordertable o
+
+
+	where C.Cno='C01' and o.orderno=d.orderno and C.Cno=o.Cno and P.Pno=d.Pno
+
+	UNION
+
+	select c.Cno,p.description,d.qty_ordered
+
+
+	from client c,product p, orderdetails d,ordertable o
+
+
+	where C.Cno='C02' and o.orderno=d.orderno and C.Cno=o.Cno and P.Pno=d.Pno
+
+;
+13.
+
+	CREATE VIEW view1 as
+
+	SELECT o.orderno,orderdate,orderstatus,pno,qty_ordered
+
+	FROM ordertable o,orderdetails ord
+WHERE o.orderno=ord.orderno; 
+14.
+
+	create UNIQUE index INDEXGIVEN
+
+	
+on orderdetails(orderno,Pno);
+
+
+
+
+	
+
+
